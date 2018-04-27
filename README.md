@@ -10,9 +10,9 @@ This is a final project of ROBT310 - Image Processing class.
 ## Installation guide
 
 
-### Requirements
-Anaconda 3+
-Python 3.6+
+**Requirements**
+Anaconda 3+  
+Python 3.6+  
   
 **Clone the repository**
 ```
