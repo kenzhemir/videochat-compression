@@ -1,5 +1,10 @@
-# videochat-compression
-ROBT310 - Image processing project
+# Videochat compression
+This is a final project of ROBT310 - Image Processing class.  
+
+## Authors
+[Miras Kenzhegaliyev](https://github.com/kenzhemir)  
+[Alisher Iskakov](https://github.com/alisheriskakov)  
+[Aslan Assylkhanov](https://github.com/AssylkhanovAslan)  
 
 ## Requirements
 Anaconda 3+
