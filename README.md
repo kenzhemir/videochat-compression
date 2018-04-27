@@ -6,12 +6,14 @@ This is a final project of ROBT310 - Image Processing class.
 [Alisher Iskakov](https://github.com/alisheriskakov)  
 [Aslan Assylkhanov](https://github.com/AssylkhanovAslan)  
 
-## Requirements
-Anaconda 3+
-Python 3.6+
 
 ## Installation guide
 
+
+### Requirements
+Anaconda 3+
+Python 3.6+
+  
 **Clone the repository**
 ```
 git clone https://github.com/kenzhemir/videochat-compression
