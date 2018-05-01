@@ -1,3 +1,4 @@
+import argparse
 import base64
 import cv2
 import pickle
@@ -5,10 +6,16 @@ import socket
 import sys
 import time
 
+# argument parser
+parser = argparse.ArgumentParser(description='Connect to a socket for video chat')
+parser.add_argument('--host', dest='hostname', help='Enter a peer hostname', required=True)
+parser.add_argument('--port', dest='port', help='Enter a peer port', required=True)
+args = parser.parse_args()
+
 # constants
 IMAGE_PATH = "image.jpg"
-HOST = "localhost"
-PORT = 8080
+HOST = args.hostname
+PORT = int(args.port)
 BUF_SIZE = 8192
 
 # create a TCP/IP socket
@@ -40,12 +47,12 @@ while True:
     # capture frame-by-frame
     ret, frame = cap.read()
     # convert to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # display the frame
-    cv2.imshow("frame", gray)
+    cv2.imshow("frame", frame)
     try:
         # sending frame through socket
-        data = pickle.dumps(gray)
+        data = pickle.dumps(frame)
         socket.sendall(data)
         # time.sleep(0.01)
         socket.sendall("end".encode("utf-8"))
@@ -60,4 +67,5 @@ while True:
 socket.close()
 # release the webcam
 cap.release()
-cv2.destroyAllWindows()    
+# destroy all CV windows
+cv2.destroyAllWindows()

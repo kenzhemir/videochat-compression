@@ -1,3 +1,4 @@
+import argparse
 import base64
 import cv2
 import matplotlib.pyplot as plt
@@ -7,10 +8,16 @@ import socket
 import sys
 import time
 
+# argument parser
+parser = argparse.ArgumentParser(description='Connect to a socket for video chat')
+parser.add_argument('--host', dest='hostname', help='Enter a server hostname', required=True)
+parser.add_argument('--port', dest='port', help='Enter a server port', required=True)
+args = parser.parse_args()
+
 # constants
 CONNECTIONS = 1
-HOST = "localhost"
-PORT = 8080
+HOST = args.hostname
+PORT = int(args.port)
 BUF_SIZE = 8192
 
 # create a TCP/IP socket
@@ -24,7 +31,7 @@ server.listen(CONNECTIONS)
 cv2.namedWindow("server")
 
 result = []
-width, height, channels = 0, 0, 0
+width, height, channels = 0, 0, 3
 
 state = 0
 
@@ -60,7 +67,7 @@ while True:
                         # print("NEW FRAME")
                         result_arr = pickle.loads(b"".join(result))
                         image = np.frombuffer(result_arr, dtype=np.uint8)
-                        image = np.reshape(image, (height, width))
+                        image = np.reshape(image, (height, width, channels))
                         cv2.imshow("server", image)
                         # exit loop on "q" key
                         if cv2.waitKey(1) & 0xFF == ord("q"):
