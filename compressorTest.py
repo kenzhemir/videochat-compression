@@ -4,8 +4,8 @@ import cv2
 import compressor
 import dithering
 
-comp = compressor.CompressorLZW()
-decomp = compressor.DecompressorLZW()
+comp = compressor.CompressorYCC()
+decomp = compressor.DecompressorYCC()
 
 
 def drawColormap(colormap):
@@ -18,18 +18,23 @@ def printRatio(A, B):
 
 
 def processor(frame):
-    
-    compressed = comp.compress(frame)
+    compressed1 = comp.compress(frame)
+    compressed2 = dithering.ditherTruncateAndPack(compressed1)
     # drawColormap(colormap)
-    printRatio(frame, compressed)
-    return frame
+    decompressed2 = dithering.unpackTruncated(compressed2)
+    decompressed1 = decomp.decompress(decompressed2)
+    printRatio(decompressed1, compressed2)
+    return decompressed1
 
 
 def startCamera(frameProcessor, frameWriter):
     cap = cv2.VideoCapture(0)
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    decomp.shape = (height, width, 3)
 
     _, frame = cap.read()
-    prev = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # prev = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     while (True):
         # Capture frame-by-frame
 
@@ -37,10 +42,11 @@ def startCamera(frameProcessor, frameWriter):
 
         _, frame = cap.read()
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        difference = frame - prev
-        diff = frameProcessor(difference)
-        frame = prev + diff
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # difference = frame - prev
+        # diff = frameProcessor(difference)
+        # frame = prev + diff
+        frame = frameProcessor(frame)
 
         t2 = time.time()
 

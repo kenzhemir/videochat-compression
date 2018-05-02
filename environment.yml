@@ -5,7 +5,6 @@ dependencies:
   - astroid=1.6.3
   - certifi=2018.4.16
   - colorama=0.3.9
-  - icc_rt=2017.0.4
   - intel-openmp=2018.0.0
   - isort=4.3.4
   - jpeg=9b
@@ -23,10 +22,7 @@ dependencies:
   - python=3.6.5
   - setuptools=39.0.1
   - six=1.11.0
-  - vc=14
-  - vs2015_runtime=14.0.25123
   - wheel=0.31.0
-  - wincertstore=0.2
   - wrapt=1.10.11
   - zlib=1.2.11
   - pip:

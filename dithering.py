@@ -68,7 +68,7 @@ def unpackTruncated(image, bits=4):
     result = np.zeros(image.size * 2)
     result[0::2] = odds
     result[1::2] = evens
-    return result
+    return np.uint8(result)
 
 
 if __name__ == '__main__':
