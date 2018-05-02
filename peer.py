@@ -14,10 +14,12 @@ SERVER_HOST = 'localhost'
 CONNECTIONS = 1
 BUF_SIZE = 8192
 
+
 # auxiliary functions
 def extract_shape(text):
     text = text.split()
     return int(text[1])
+
 
 class ServerThread(Thread):
     def __init__(self, host, port, connections):
@@ -57,7 +59,7 @@ class ServerThread(Thread):
     def close(self):
         # close sockets
         self.client.close()
-        self.server.close()        
+        self.server.close()
         # destroy all CV windows
         cv2.destroyAllWindows()
 
@@ -66,8 +68,8 @@ class ServerThread(Thread):
         cv2.namedWindow('peer_stream')
         # accept a client connection
         print('--- waiting for a connection ---')
-        self.accept()        
-        while True:            
+        self.accept()
+        while True:
             # client stream routing
             try:
                 # receive message from client
@@ -93,16 +95,19 @@ class ServerThread(Thread):
                         if self.received == b'end':
                             # calculate FPS
                             self.curr = time.time()
-                            print('took {} time'.format(1/abs(self.curr - self.prev)))
+                            print('took {} time'.format(
+                                1 / abs(self.curr - self.prev)))
                             # get peer frame
-                            peer_frame_arr = pickle.loads(b"".join(self.peer_frame))
-                            image = np.frombuffer(tuple(peer_frame_arr), dtype=np.uint8)
+                            peer_frame_arr = pickle.loads(
+                                b"".join(self.peer_frame))
+                            image = np.frombuffer(
+                                tuple(peer_frame_arr), dtype=np.uint8)
                             image = np.reshape(image, self.peer_frame_shape)
                             # show peer frame
                             cv2.imshow('peer_stream', image)
                             # exit loop on "q" key
                             key = cv2.waitKey(1) & 0xFF
-                            if key == ord("q"):                                
+                            if key == ord("q"):
                                 self.close()
                                 break
                             # clear peer frame
@@ -126,12 +131,12 @@ class PeerThread(Thread):
         self.peer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # peer hostname and port
         self.peer_host = host
-        self.peer_port = port        
+        self.peer_port = port
 
     def connect(self):
         # connect to peer
         self.peer.connect(self.peer_host, self.peer_port)
-        
+
     def send(self, msg):
         self.peer.sendall(msg)
 
@@ -146,13 +151,13 @@ class PeerThread(Thread):
 
     def close(self):
         # close sockets
-        self.peer.close()        
+        self.peer.close()
         # release the webcam
         self.cap.release()
         # destroy all CV windows
         cv2.destroyAllWindows()
 
-    def run(self):        
+    def run(self):
         # create named window
         cv2.namedWindow('my_stream')
         # start video capture
@@ -177,23 +182,32 @@ class PeerThread(Thread):
             except:
                 self.close()
                 break
-            
+
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 self.close()
                 break
 
+
 # argument parser
-parser = argparse.ArgumentParser(description='Connect to a socket for video chat')
-parser.add_argument('--server-port', dest='server_port', help='Enter a server port', required=True)
-parser.add_argument('--host', dest='hostname', help='Enter a peer hostname', required=True)
-parser.add_argument('--port', dest='port', help='Enter a peer port', required=True)
+parser = argparse.ArgumentParser(
+    description='Connect to a socket for video chat')
+parser.add_argument(
+    '--server-port',
+    dest='server_port',
+    help='Enter a server port',
+    required=True)
+parser.add_argument(
+    '--host', dest='hostname', help='Enter a peer hostname', required=True)
+parser.add_argument(
+    '--port', dest='port', help='Enter a peer port', required=True)
 args = parser.parse_args()
 
 # run from command line
 if __name__ == '__main__':
     print('Starting server thread')
-    server_thread = ServerThread(SERVER_HOST, int(args.server_port), CONNECTIONS)
+    server_thread = ServerThread(SERVER_HOST, int(args.server_port),
+                                 CONNECTIONS)
     server_thread.start()
 
     print('Press Enter when peer server is ready')
