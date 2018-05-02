@@ -51,6 +51,14 @@ def ditherTruncate(image, bits=4):
     return np.left_shift(np.right_shift(image, bits), bits)
 
 
+def ditherTruncateAndPack(image, bits=4):
+    im = image.flatten()
+    result = np.zeros((int(np.round(im.shape[0] / 2)), ))
+    result += ditherTruncate(im[0::2], bits)
+    result += np.right_shift(im[1::2], bits)
+    return result
+
+
 if __name__ == '__main__':
     im = cv2.imread('lena_rgb.tif')
     cv2.imshow("Window2", im)
