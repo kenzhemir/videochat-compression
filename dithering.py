@@ -56,6 +56,18 @@ def ditherTruncateAndPack(image, bits=4):
     result = np.zeros((int(np.round(im.shape[0] / 2)), ))
     result += ditherTruncate(im[0::2], bits)
     result += np.right_shift(im[1::2], bits)
+    return np.uint8(result)
+
+
+def unpackTruncated(image, bits=4):
+    # image flatten array
+    odds = ditherTruncate(image, bits)
+    print(odds)
+    evens = np.left_shift(image, bits)
+    print(evens)
+    result = np.zeros(image.size * 2)
+    result[0::2] = odds
+    result[1::2] = evens
     return result
 
 
