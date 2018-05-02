@@ -2,6 +2,7 @@ import time
 import numpy as np
 import cv2
 import compressor
+import dithering
 
 comp = compressor.CompressorLZW()
 decomp = compressor.DecompressorLZW()
@@ -17,8 +18,9 @@ def printRatio(A, B):
 
 
 def processor(frame):
-    (compressed, colormap) = comp.compress(frame, True)
-    drawColormap(colormap)
+    
+    compressed = comp.compress(frame)
+    # drawColormap(colormap)
     printRatio(frame, compressed)
     return frame
 
@@ -26,15 +28,19 @@ def processor(frame):
 def startCamera(frameProcessor, frameWriter):
     cap = cv2.VideoCapture(0)
 
+    _, frame = cap.read()
+    prev = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     while (True):
         # Capture frame-by-frame
 
         t1 = time.time()
 
-        ret, frame = cap.read()
+        _, frame = cap.read()
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame = frameProcessor(frame)
+        difference = frame - prev
+        diff = frameProcessor(difference)
+        frame = prev + diff
 
         t2 = time.time()
 

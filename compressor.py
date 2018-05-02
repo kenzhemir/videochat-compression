@@ -126,3 +126,33 @@ class DecompressorLZW(LZW):
             CR = P
         uncompressed = np.array(uncompressed)
         return uncompressed
+
+
+class CompressorRLE():
+    def compress(self, image):
+        return self.withLoops(image)
+
+    def withLoops(self, image):
+        flat = image.flatten()
+        prev = flat[0]
+        count = 0
+        encoded = []
+        for curr in flat:
+            if prev == curr:
+                count += 1
+            else:
+                encoded.append((prev, count))
+                count = 1
+                prev = curr
+        return np.array(encoded)
+
+
+class DecompressorRLE():
+    def compress(self, image):
+        return self.withLoops(image)
+
+    def withLoops(self, image):
+        decompressed = []
+        for (p, c) in image:
+            decompressed = decompressed + [p] * c
+        return np.array(decompressed)
