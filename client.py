@@ -5,11 +5,16 @@ import pickle
 import socket
 import sys
 import time
+from compressor import CompressorYCC
+import dithering
 
 # argument parser
-parser = argparse.ArgumentParser(description='Connect to a socket for video chat')
-parser.add_argument('--host', dest='hostname', help='Enter a peer hostname', required=True)
-parser.add_argument('--port', dest='port', help='Enter a peer port', required=True)
+parser = argparse.ArgumentParser(
+    description='Connect to a socket for video chat')
+parser.add_argument(
+    '--host', dest='hostname', help='Enter a peer hostname', required=True)
+parser.add_argument(
+    '--port', dest='port', help='Enter a peer port', required=True)
 args = parser.parse_args()
 
 # constants
@@ -17,6 +22,9 @@ IMAGE_PATH = "image.jpg"
 HOST = args.hostname
 PORT = int(args.port)
 BUF_SIZE = 8192
+
+# create compressor and decompressor
+comp = CompressorYCC()
 
 # create a TCP/IP socket
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,7 +60,10 @@ while True:
     cv2.imshow("frame", frame)
     try:
         # sending frame through socket
-        data = pickle.dumps(frame)
+        compressed1 = comp.compress(frame)
+        compressed2 = dithering.ditherTruncateAndPack(compressed1)
+
+        data = pickle.dumps(compressed2)
         socket.sendall(data)
         # time.sleep(0.01)
         socket.sendall("end".encode("utf-8"))
